@@ -1,16 +1,10 @@
-import {
-  Clock,
-  ConfigBase,
-  ConfigProvider,
-  Logger,
-  ObjectStorageClient,
-} from "../port";
+import { Clock, ConfigProvider, Logger, ObjectStorageClient } from "../port";
 
-export const rotate = async <Config extends ConfigBase>(deps: {
+export const rotate = async (deps: {
   clock: Clock;
-  configProvider: ConfigProvider<Config>;
+  configProvider: ConfigProvider;
   logger: Logger;
-  objectStorageClient: ObjectStorageClient<any>;
+  objectStorageClient: ObjectStorageClient;
 }): Promise<void> => {
   await deps.logger.info(`rotating process done`);
 
@@ -19,17 +13,17 @@ export const rotate = async <Config extends ConfigBase>(deps: {
   const tsNow = await deps.clock.now();
   const tsOutdatedAtPoint = tsNow - rotateRetentionSecs;
 
-  const dirnames = await deps.objectStorageClient.list(deps);
-  const dirnamesOutdated = dirnames.filter(
+  const objectNames = await deps.objectStorageClient.list();
+  const objectNamesOutdated = objectNames.filter(
     (s) => Number(s) < tsOutdatedAtPoint
   );
 
-  for (const dirnameOutdated of dirnamesOutdated) {
-    await deps.objectStorageClient.delete(deps, dirnameOutdated);
+  for (const objectNameOutdated of objectNamesOutdated) {
+    await deps.objectStorageClient.delete(objectNameOutdated);
     await deps.logger.info(
-      `outdated backup directory has been deleted dirnameOutdated=${dirnameOutdated}`
+      `outdated backup directory has been deleted dirnameOutdated=${objectNameOutdated}`
     );
   }
 
-  await deps.logger.info(`entire rotating process done`);
+  await deps.logger.info(`rotate process done`);
 };

@@ -5,6 +5,7 @@ export const envConfigProvider: ConfigProvider = {
     require("dotenv").config();
 
     return {
+      cronExpression: process.env["JUMP_CRON_EXPRESSION"]!,
       path: process.env["JUMP_PATH"]!,
       rotateRetentionDays: Number(process.env["JUMP_ROTATE_RETENTION_DAYS"]!),
       aws: {
