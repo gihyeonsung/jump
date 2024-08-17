@@ -8,7 +8,7 @@ export const upload = async (deps: {
 }): Promise<void> => {
   const pathLocal = (await deps.configProvider.read()).path;
 
-  const now = deps.clock.now();
+  const now = await deps.clock.now();
   const pathRemote = `${now}`;
 
   await deps.objectStorageClient.copy(pathLocal, pathRemote);
