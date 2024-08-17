@@ -1,5 +1,8 @@
 export type Config = {
-  cronExpression: string;
+  cron: {
+    expression: string;
+    timezone: string;
+  };
   path: string;
   rotateRetentionDays: number;
   aws: {

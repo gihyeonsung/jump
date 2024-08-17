@@ -1,3 +1,5 @@
+import { schedule } from "node-cron";
+
 import {
   consoleLogger,
   envConfigProvider,
@@ -27,12 +29,18 @@ const main: () => Promise<void> = async () => {
     logger,
   });
 
-  try {
-    await upload({ clock, configProvider, logger, objectStorageClient });
-    await rotate({ clock, configProvider, logger, objectStorageClient });
-  } catch (e) {
-    logger.error(`caught unexpected e=${JSON.stringify(e)}`);
-  }
+  schedule(
+    config.cron.expression,
+    async () => {
+      try {
+        await upload({ clock, configProvider, logger, objectStorageClient });
+        await rotate({ clock, configProvider, logger, objectStorageClient });
+      } catch (e) {
+        logger.error(`caught unexpected e=${JSON.stringify(e)}`);
+      }
+    },
+    { timezone: config.cron.timezone }
+  );
 };
 
 main();
