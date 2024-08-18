@@ -5,13 +5,9 @@ export type Config = {
   };
   path: string;
   rotateRetentionDays: number;
-  aws: {
-    endpoint: string;
-    region: string;
-    credentials: {
-      accessKeyId: string;
-      secretAccessKey: string;
-    };
+  b2: {
+    applicationKeyId: string;
+    applicationKey: string;
     bucketName: string;
   };
 };

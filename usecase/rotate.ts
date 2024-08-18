@@ -6,14 +6,13 @@ export const rotate = async (deps: {
   logger: Logger;
   objectStorageClient: ObjectStorageClient;
 }): Promise<void> => {
-  await deps.logger.info(`rotating process done`);
-
   const rotateRetentionSecs =
     1 * 60 * 60 * 24 * (await deps.configProvider.read()).rotateRetentionDays;
   const tsNow = await deps.clock.now();
   const tsOutdatedAtPoint = tsNow - rotateRetentionSecs;
 
   const objectNames = await deps.objectStorageClient.list();
+  await deps.logger.info(JSON.stringify(objectNames));
   const objectNamesOutdated = objectNames.filter(
     (s) => Number(s) < tsOutdatedAtPoint
   );
@@ -25,5 +24,5 @@ export const rotate = async (deps: {
     );
   }
 
-  await deps.logger.info(`rotate process done`);
+  await deps.logger.info(`rotate done`);
 };
